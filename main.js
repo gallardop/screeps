@@ -4,6 +4,8 @@ var roleUpgrader = require('role.upgrader');
 var roleDefinition = require('role.definition');
 var basicRespawner = require('basic-respawner');
 var harvesterController = require('harvester-controller');
+var basicDefense = require('defense');
+var defenseCounterCheck = 0;
 
 module.exports.loop = function () {
 
@@ -47,5 +49,11 @@ module.exports.loop = function () {
             roleUpgrader.run(creep);
         }
 
+    }
+    // Execute defense every 5 ticks
+    defenseCounterCheck--;
+    if(defenseCounterCheck == 0){
+      basicDefense.defend(Game.spawns);
+      defenseCounterCheck = 5;
     }
 }
