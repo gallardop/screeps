@@ -16,7 +16,6 @@ var harvesterController = {
       // Obtain all harvesters
       var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
 
-      // TODO REMOVE TRUE
       var somethingChanged = Memory.lastAssignment.amountHarvesters != harvesters.length || Memory.lastAssignment.amountSources != sources.length;
 
 
@@ -48,7 +47,7 @@ var harvesterController = {
               var currentHarvester = harvesters[index];
               var currentAssignment = Memory.sourceAssignment[index-(round*amountSources)];
               currentAssignment.harvesters.push(currentHarvester);
-              currentHarvester.memory.targetSource = currentAssignment.source;
+              currentHarvester.memory.targetSourceId = currentAssignment.source.id;
 
               // Each source is assigned one harvester each round (round is completed on the index goes over the array)
               if(index % amountSources == 0) {
