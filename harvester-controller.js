@@ -6,12 +6,16 @@ var harvesterController = {
       if(typeof Memory.lastAssignment === 'undefined') {
           Memory.lastAssignment = {
             amountHarvesters: 0,
-            amountSources: 0,
+            amountSources: 0
           };
       }
 
       // Obtain all sources
-      var sources = Game.spawns['Spawn1'].room.find(FIND_SOURCES_ACTIVE);
+      var activeSources = Game.spawns['Spawn1'].room.find(FIND_SOURCES_ACTIVE);
+
+      // Remove dangerous sources
+      var sources = _.filter(activeSources, (source) => source.pos.findInRange(FIND_HOSTILE_CREEPS, 4).length == 0);
+
 
       // Obtain all harvesters
       var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
@@ -27,7 +31,7 @@ var harvesterController = {
           // Save current amounts - used for detecting changes and redistributing harvesters
           Memory.lastAssignment = {
             amountHarvesters: harvesters.length,
-            amountSources: sources.length,
+            amountSources: sources.length
           };
 
           // Generate assignment record
@@ -43,16 +47,16 @@ var harvesterController = {
           var round = 0;
           var amountSources = sources.length;
           for(var index = 0; index < harvesters.length; index++) {
-              // Assign harvester to source
+              // Each source is assigned one harvester each round (round is completed on the index goes over the array)
+              if(index % amountSources == 0) {
+                  round = index / amountSources;
+              }
               var currentHarvester = harvesters[index];
               var currentAssignment = Memory.sourceAssignment[index-(round*amountSources)];
               currentAssignment.harvesters.push(currentHarvester);
               currentHarvester.memory.targetSourceId = currentAssignment.source.id;
 
-              // Each source is assigned one harvester each round (round is completed on the index goes over the array)
-              if(index % amountSources == 0) {
-                  round = index / amountSources;
-              }
+
           }
       }
 
